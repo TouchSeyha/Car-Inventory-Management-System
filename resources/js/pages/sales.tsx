@@ -6,64 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState } from 'react';
-
-// Sample sales data
-const salesData = [
-  {
-    id: 'ORD-2023-001',
-    customer: 'John Doe',
-    date: '2023-08-15',
-    items: 3,
-    total: 349.97,
-    status: 'Completed',
-    paymentMethod: 'Credit Card'
-  },
-  {
-    id: 'ORD-2023-002',
-    customer: 'Sarah Smith',
-    date: '2023-08-14',
-    items: 1,
-    total: 899.99,
-    status: 'Completed',
-    paymentMethod: 'PayPal'
-  },
-  {
-    id: 'ORD-2023-003',
-    customer: 'Mike Johnson',
-    date: '2023-08-14',
-    items: 5,
-    total: 124.95,
-    status: 'Processing',
-    paymentMethod: 'Credit Card'
-  },
-  {
-    id: 'ORD-2023-004',
-    customer: 'Lisa Wong',
-    date: '2023-08-13',
-    items: 2,
-    total: 199.98,
-    status: 'Shipped',
-    paymentMethod: 'Bank Transfer'
-  },
-  {
-    id: 'ORD-2023-005',
-    customer: 'David Chen',
-    date: '2023-08-10',
-    items: 4,
-    total: 459.96,
-    status: 'Completed',
-    paymentMethod: 'Credit Card'
-  },
-  {
-    id: 'ORD-2023-006',
-    customer: 'Emma Wilson',
-    date: '2023-08-09',
-    items: 1,
-    total: 29.99,
-    status: 'Cancelled',
-    paymentMethod: 'PayPal'
-  }
-];
+import { salesData } from './data/mockData';
+import { Card } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -85,11 +37,11 @@ export default function Sales() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Completed': return 'bg-green-100 text-green-800';
-      case 'Processing': return 'bg-blue-100 text-blue-800';
-      case 'Shipped': return 'bg-purple-100 text-purple-800';
-      case 'Cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Completed': return 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300';
+      case 'Processing': return 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300';
+      case 'Shipped': return 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300';
+      case 'Cancelled': return 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
     }
   };
 
@@ -124,43 +76,45 @@ export default function Sales() {
           </Select>
         </div>
 
-        <div className="bg-white shadow-sm rounded-lg overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+        <Card>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Order ID</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Items</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Payment</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {filteredSales.map((sale) => (
-                <tr key={sale.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{sale.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{sale.customer}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{sale.date}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{sale.items}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${sale.total.toFixed(2)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <TableRow key={sale.id}>
+                  <TableCell className="font-medium">{sale.id}</TableCell>
+                  <TableCell>{sale.customer}</TableCell>
+                  <TableCell>{sale.date}</TableCell>
+                  <TableCell>{sale.items}</TableCell>
+                  <TableCell>${sale.total.toFixed(2)}</TableCell>
+                  <TableCell>
                     <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(sale.status)}`}>
                       {sale.status}
                     </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{sale.paymentMethod}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-900">View</Button>
-                    <Button variant="ghost" size="sm" className="text-green-600 hover:text-green-900 ml-2">Manage</Button>
-                  </td>
-                </tr>
+                  </TableCell>
+                  <TableCell>{sale.paymentMethod}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button variant="ghost" size="sm">View</Button>
+                      <Button variant="ghost" size="sm">Manage</Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
+        </Card>
       </div>
     </AppLayout>
   );

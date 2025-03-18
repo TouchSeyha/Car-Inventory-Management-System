@@ -174,3 +174,60 @@ export const calculateDashboardStats = (cars: Car[]): DashboardStats => {
         newestCar,
     };
 };
+
+export const salesData = [
+    {
+        id: 'ORD-2023-001',
+        customer: 'John Doe',
+        date: '2023-08-15',
+        items: 3,
+        total: 349.97,
+        status: 'Completed',
+        paymentMethod: 'Credit Card',
+    },
+    {
+        id: 'ORD-2023-002',
+        customer: 'Sarah Smith',
+        date: '2023-08-14',
+        items: 1,
+        total: 899.99,
+        status: 'Completed',
+        paymentMethod: 'PayPal',
+    },
+    {
+        id: 'ORD-2023-003',
+        customer: 'Mike Johnson',
+        date: '2023-08-14',
+        items: 5,
+        total: 124.95,
+        status: 'Processing',
+        paymentMethod: 'Credit Card',
+    },
+    {
+        id: 'ORD-2023-004',
+        customer: 'Lisa Wong',
+        date: '2023-08-13',
+        items: 2,
+        total: 199.98,
+        status: 'Shipped',
+        paymentMethod: 'Bank Transfer',
+    },
+    {
+        id: 'ORD-2023-005',
+        customer: 'David Chen',
+        date: '2023-08-10',
+        items: 4,
+        total: 459.96,
+        status: 'Completed',
+        paymentMethod: 'Credit Card',
+    },
+    {
+        id: 'ORD-2023-006',
+        customer: 'Emma Wilson',
+        date: '2023-08-09',
+        items: 1,
+        total: 29.99,
+        status: 'Cancelled',
+        paymentMethod: 'PayPal',
+    },
+];
