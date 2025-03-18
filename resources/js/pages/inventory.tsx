@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState } from 'react';
+import { Card } from '@/components/ui/card';
 
 // Sample car inventory items
 const sampleInventory = [
@@ -152,10 +153,10 @@ export default function Inventory() {
     );
 
   const getStatusColor = (status: string) => {
-    if (status === 'In Stock') return 'bg-green-100 text-green-800';
-    if (status === 'Low Stock') return 'bg-yellow-100 text-yellow-800';
-    if (status === 'Out of Stock') return 'bg-red-100 text-red-800';
-    return 'bg-gray-100 text-gray-800';
+    if (status === 'In Stock') return 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300';
+    if (status === 'Low Stock') return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-300';
+    if (status === 'Out of Stock') return 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300';
+    return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
   };
 
   return (
@@ -193,8 +194,8 @@ export default function Inventory() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredItems.map((item) => (
-            <div key={item.id} className="bg-white rounded-lg border shadow overflow-hidden">
-              <div className="h-48 overflow-hidden flex items-center justify-center bg-gray-100">
+            <Card key={item.id} className="overflow-hidden">
+              <div className="h-48 overflow-hidden flex items-center justify-center bg-gray-100 dark:bg-gray-800">
                 <img
                   src={item.imageUrl}
                   alt={item.name}
@@ -204,8 +205,8 @@ export default function Inventory() {
               <div className="p-4">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-semibold text-lg">{item.name}</h3>
-                    <div className="flex gap-2 text-sm text-gray-500">
+                    <h3 className="font-semibold text-lg text-foreground">{item.name}</h3>
+                    <div className="flex gap-2 text-sm text-muted-foreground">
                       <span>{item.year}</span>
                       <span>•</span>
                       <span>{item.category}</span>
@@ -216,15 +217,15 @@ export default function Inventory() {
                   </span>
                 </div>
                 <div className="mt-4 flex justify-between items-center">
-                  <p className="font-bold text-lg">${item.price.toLocaleString()}</p>
-                  <p className="text-sm">Available: {item.stock}</p>
+                  <p className="font-bold text-lg text-foreground">${item.price.toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground">Available: {item.stock}</p>
                 </div>
                 <div className="mt-4 flex space-x-2">
                   <Button size="sm" variant="outline" className="flex-1">Edit</Button>
                   <Button size="sm" className="flex-1">View Details</Button>
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       </div>
