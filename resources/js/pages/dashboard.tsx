@@ -23,10 +23,13 @@ export default function Dashboard() {
 
     // Summary statistics
     const statistics = {
-        totalSales: '$124,856',
-        totalOrders: '1,245',
-        averageOrder: '$98.50',
-        customerRetention: '68%'
+        totalSales: 317,
+        totalRevenue: '$11,567,300',
+        totalProfit: '$1,735,095',
+        bestSalesMonth: 'Dec',
+        worstSalesMonth: 'Feb',
+        averageOrderValue: '$36489.91',
+        customerRetention: '37.50%'
     };
 
     return (
@@ -42,12 +45,12 @@ export default function Dashboard() {
                     </Card>
                     <Card className="p-4 shadow-sm">
                         <h3 className="text-sm font-medium text-gray-500">Orders</h3>
-                        <p className="text-2xl font-bold mt-2">{statistics.totalOrders}</p>
+                        <p className="text-2xl font-bold mt-2">{statistics.totalRevenue}</p>
                         <div className="text-xs text-green-600 mt-1">↑ 8.2% from previous period</div>
                     </Card>
                     <Card className="p-4 shadow-sm">
                         <h3 className="text-sm font-medium text-gray-500">Average Order</h3>
-                        <p className="text-2xl font-bold mt-2">{statistics.averageOrder}</p>
+                        <p className="text-2xl font-bold mt-2">{statistics.averageOrderValue}</p>
                         <div className="text-xs text-green-600 mt-1">↑ 3.7% from previous period</div>
                     </Card>
                     <Card className="p-4 shadow-sm">
@@ -103,7 +106,7 @@ export default function Dashboard() {
                     {/* Pie Chart */}
                     <Card className="p-4 shadow-sm">
                         <h3 className="text-md font-semibold mb-4">Sales by Category</h3>
-                        <div className="h-64">
+                        <div className="h-72">
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie
