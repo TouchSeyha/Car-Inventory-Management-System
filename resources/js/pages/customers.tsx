@@ -2,44 +2,20 @@ import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import HeadingSmall from '@/components/heading-small';
-import { Customer } from '@/types/customer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
-
-// Sample data
-const sampleCustomers: Customer[] = [
-  {
-    id: '1',
-    name: 'John Doe',
-    email: 'john@example.com',
-    phone: '+855 12 345 678',
-    address: 'Phnom Penh, Cambodia',
-    purchaseCount: 5,
-    totalSpent: 1250,
-    lastPurchase: '2023-06-15'
-  },
-  {
-    id: '2',
-    name: 'Sarah Smith',
-    email: 'sarah@example.com',
-    phone: '+855 12 876 543',
-    address: 'Siem Reap, Cambodia',
-    purchaseCount: 3,
-    totalSpent: 780,
-    lastPurchase: '2023-07-22'
-  },
-  {
-    id: '3',
-    name: 'David Chen',
-    email: 'david@example.com',
-    phone: '+855 11 222 333',
-    address: 'Battambang, Cambodia',
-    purchaseCount: 8,
-    totalSpent: 2340,
-    lastPurchase: '2023-08-05'
-  }
-];
+import { sampleCustomers } from './data/mockData';
+import { Card } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { DollarSign, EyeIcon, PencilIcon, UserPlusIcon } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -64,7 +40,10 @@ export default function Customers() {
       <div className="p-4">
         <div className="mb-6 flex justify-between items-center">
           <HeadingSmall title="Customers" description="Manage your customer information" />
-          <Button>Add Customer</Button>
+          <Button>
+            <UserPlusIcon className="h-4 w-4 mr-2" />
+            Add Customer
+          </Button>
         </div>
 
         <div className="mb-4">
@@ -76,37 +55,66 @@ export default function Customers() {
           />
         </div>
 
-        <div className="overflow-x-auto rounded-lg border bg-white shadow">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-              <tr>
-                <th className="px-6 py-3">Name</th>
-                <th className="px-6 py-3">Email</th>
-                <th className="px-6 py-3">Phone</th>
-                <th className="px-6 py-3">Purchases</th>
-                <th className="px-6 py-3">Total Spent</th>
-                <th className="px-6 py-3">Last Purchase</th>
-                <th className="px-6 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+        <Card>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Phone</TableHead>
+                <TableHead>Purchases</TableHead>
+                <TableHead>Total Spent</TableHead>
+                <TableHead>Last Purchase</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {filteredCustomers.map((customer) => (
-                <tr key={customer.id} className="border-b hover:bg-gray-50">
-                  <td className="px-6 py-4 font-medium">{customer.name}</td>
-                  <td className="px-6 py-4">{customer.email}</td>
-                  <td className="px-6 py-4">{customer.phone}</td>
-                  <td className="px-6 py-4">{customer.purchaseCount}</td>
-                  <td className="px-6 py-4">${customer.totalSpent.toFixed(2)}</td>
-                  <td className="px-6 py-4">{customer.lastPurchase}</td>
-                  <td className="px-6 py-4">
-                    <Button variant="ghost" size="sm" className="mr-1">View</Button>
-                    <Button variant="ghost" size="sm" className="text-blue-600">Edit</Button>
-                  </td>
-                </tr>
+                <TableRow key={customer.id}>
+                  <TableCell className="font-medium">{customer.name}</TableCell>
+                  <TableCell>{customer.email}</TableCell>
+                  <TableCell>{customer.phone}</TableCell>
+                  <TableCell>
+                    <span className={`inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-sm font-medium
+                      ${customer.purchaseCount > 10
+                        ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300'
+                        : customer.purchaseCount > 5
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'}`}
+                    >
+                      {customer.purchaseCount}
+                    </span>
+                  </TableCell>
+
+                  <TableCell>
+                    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-sm font-medium
+                      ${customer.totalSpent > 2000
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+                        : customer.totalSpent > 1000
+                          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300'
+                          : 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300'}`}
+                    >
+                      <DollarSign className="h-4 w-4" />
+                      {customer.totalSpent.toFixed(2)}
+                    </span>
+                  </TableCell>
+                  <TableCell>{customer.lastPurchase}</TableCell>
+                  <TableCell>
+                    <div className="flex space-x-2">
+                      <Button variant="ghost" size="icon" title="View customer">
+                        <EyeIcon className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" title="Edit customer"
+                        className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                        <PencilIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
+        </Card>
       </div>
     </AppLayout>
   );

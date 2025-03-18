@@ -7,43 +7,13 @@ import {
     AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
     XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
+import { salesDatas, customerData, categoryData } from './data/mockData';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
         href: '/dashboard',
     },
-];
-
-// Sample data for charts
-const salesData = [
-    { month: 'Jan', sales: 4000, revenue: 2400, profit: 1400 },
-    { month: 'Feb', sales: 3000, revenue: 1398, profit: 900 },
-    { month: 'Mar', sales: 5000, revenue: 4800, profit: 2200 },
-    { month: 'Apr', sales: 2780, revenue: 3908, profit: 1500 },
-    { month: 'May', sales: 1890, revenue: 4800, profit: 1700 },
-    { month: 'Jun', sales: 2390, revenue: 3800, profit: 1200 },
-    { month: 'Jul', sales: 3490, revenue: 4300, profit: 2100 },
-    { month: 'Aug', sales: 4000, revenue: 2400, profit: 1400 },
-    { month: 'Sep', sales: 3000, revenue: 1398, profit: 900 },
-    { month: 'Oct', sales: 2000, revenue: 9800, profit: 2200 },
-    { month: 'Nov', sales: 2780, revenue: 3908, profit: 1500 },
-    { month: 'Dec', sales: 1890, revenue: 4800, profit: 2800 },
-];
-
-const categoryData = [
-    { name: 'Electronics', value: 400 },
-    { name: 'Clothing', value: 300 },
-    { name: 'Furniture', value: 200 },
-    { name: 'Books', value: 150 },
-    { name: 'Other', value: 100 },
-];
-
-const customerData = [
-    { name: 'Week 1', new: 45, returning: 120 },
-    { name: 'Week 2', new: 52, returning: 135 },
-    { name: 'Week 3', new: 61, returning: 150 },
-    { name: 'Week 4', new: 55, returning: 165 },
 ];
 
 const COLORS = ['#8884d8', '#82ca9d', '#FFBB28', '#FF8042', '#0088FE'];
@@ -95,7 +65,7 @@ export default function Dashboard() {
                         <div className="h-64">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart
-                                    data={salesData}
+                                    data={salesDatas}
                                     margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
                                 >
                                     <CartesianGrid strokeDasharray="3 3" />
@@ -164,7 +134,7 @@ export default function Dashboard() {
                     <div className="h-96">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart
-                                data={salesData}
+                                data={salesDatas}
                                 margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                             >
                                 <CartesianGrid strokeDasharray="3 3" />
