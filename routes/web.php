@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\InventoryController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,9 +27,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
 
     // Inventory routes
-    Route::get('/inventory', function () {
-        return Inertia::render('inventory');
-    })->name('inventory');
+    Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory');
+    Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
+    Route::get('/inventory/create', function () {
+        return Inertia::render('inventory/create');
+    })->name('inventory.create');
+    Route::get('/inventory/{inventory}/edit', function (App\Models\Inventory $inventory) {
+        return Inertia::render('inventory/edit', ['inventory' => $inventory]);
+    })->name('inventory.edit');
+    Route::put('/inventory/{inventory}', [InventoryController::class, 'update'])->name('inventory.update');
+    Route::delete('/inventory/{inventory}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
+    Route::get('/inventory/{inventory}', function (App\Models\Inventory $inventory) {
+        return Inertia::render('inventory/show', ['inventory' => $inventory]);
+    })->name('inventory.show');
 
     // Reports routes
     Route::get('/reports', function () {
