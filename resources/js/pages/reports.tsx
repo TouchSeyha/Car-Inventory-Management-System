@@ -22,7 +22,7 @@ export default function Reports() {
     totalSales: '$24,680.55',
     ordersCompleted: '387',
     averageOrder: '$63.77',
-    topSellingProduct: 'Laptop XPS 15',
+    topSellingProduct: 'Tesla Model 3',
     customerRetentionRate: '68%',
     inventoryValue: '$105,240.00'
   };
