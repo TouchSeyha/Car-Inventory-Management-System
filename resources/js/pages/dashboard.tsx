@@ -1,13 +1,26 @@
+import { Card } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { Card } from '@/components/ui/card';
 // import { useState } from 'react';
 import {
-    AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
-    XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+    Area,
+    AreaChart,
+    Bar,
+    BarChart,
+    CartesianGrid,
+    Cell,
+    Legend,
+    Line,
+    LineChart,
+    Pie,
+    PieChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis,
 } from 'recharts';
-import { salesDatas, customerData, categoryData } from './data/mockData';
+import { categoryData, customerData, salesDatas } from './data/mockData';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -29,7 +42,7 @@ export default function Dashboard() {
         bestSalesMonth: 'Dec',
         worstSalesMonth: 'Feb',
         averageOrderValue: '$36489.91',
-        customerRetention: '37.50%'
+        customerRetention: '37.50%',
     };
 
     return (
@@ -37,40 +50,37 @@ export default function Dashboard() {
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 {/* Stats cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <Card className="p-4 shadow-sm">
                         <h3 className="text-sm font-medium text-gray-500">Total Sales</h3>
-                        <p className="text-2xl font-bold mt-2">{statistics.totalSales}</p>
-                        <div className="text-xs text-green-600 mt-1">↑ 12.5% from previous period</div>
+                        <p className="mt-2 text-2xl font-bold">{statistics.totalSales}</p>
+                        <div className="mt-1 text-xs text-green-600">↑ 12.5% from previous period</div>
                     </Card>
                     <Card className="p-4 shadow-sm">
                         <h3 className="text-sm font-medium text-gray-500">Orders</h3>
-                        <p className="text-2xl font-bold mt-2">{statistics.totalRevenue}</p>
-                        <div className="text-xs text-green-600 mt-1">↑ 8.2% from previous period</div>
+                        <p className="mt-2 text-2xl font-bold">{statistics.totalRevenue}</p>
+                        <div className="mt-1 text-xs text-green-600">↑ 8.2% from previous period</div>
                     </Card>
                     <Card className="p-4 shadow-sm">
                         <h3 className="text-sm font-medium text-gray-500">Average Order</h3>
-                        <p className="text-2xl font-bold mt-2">{statistics.averageOrderValue}</p>
-                        <div className="text-xs text-green-600 mt-1">↑ 3.7% from previous period</div>
+                        <p className="mt-2 text-2xl font-bold">{statistics.averageOrderValue}</p>
+                        <div className="mt-1 text-xs text-green-600">↑ 3.7% from previous period</div>
                     </Card>
                     <Card className="p-4 shadow-sm">
                         <h3 className="text-sm font-medium text-gray-500">Customer Retention</h3>
-                        <p className="text-2xl font-bold mt-2">{statistics.customerRetention}</p>
-                        <div className="text-xs text-yellow-600 mt-1">↓ 2.1% from previous period</div>
+                        <p className="mt-2 text-2xl font-bold">{statistics.customerRetention}</p>
+                        <div className="mt-1 text-xs text-yellow-600">↓ 2.1% from previous period</div>
                     </Card>
                 </div>
 
                 {/* Chart row */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     {/* Line Chart */}
                     <Card className="p-4 shadow-sm">
-                        <h3 className="text-md font-semibold mb-4">Monthly Revenue</h3>
+                        <h3 className="text-md mb-4 font-semibold">Monthly Revenue</h3>
                         <div className="h-64">
                             <ResponsiveContainer width="100%" height="100%">
-                                <LineChart
-                                    data={salesDatas}
-                                    margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
-                                >
+                                <LineChart data={salesDatas} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="month" />
                                     <YAxis />
@@ -84,13 +94,10 @@ export default function Dashboard() {
 
                     {/* Bar Chart */}
                     <Card className="p-4 shadow-sm">
-                        <h3 className="text-md font-semibold mb-4">Customer Activity</h3>
+                        <h3 className="text-md mb-4 font-semibold">Customer Activity</h3>
                         <div className="h-64">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart
-                                    data={customerData}
-                                    margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
-                                >
+                                <BarChart data={customerData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="name" />
                                     <YAxis />
@@ -105,7 +112,7 @@ export default function Dashboard() {
 
                     {/* Pie Chart */}
                     <Card className="p-4 shadow-sm">
-                        <h3 className="text-md font-semibold mb-4">Sales by Category</h3>
+                        <h3 className="text-md mb-4 font-semibold">Sales by Category</h3>
                         <div className="h-72">
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
@@ -133,13 +140,10 @@ export default function Dashboard() {
 
                 {/* Area Chart (Full Width) */}
                 <Card className="p-4 shadow-sm">
-                    <h3 className="text-md font-semibold mb-4">Sales Performance Trend</h3>
+                    <h3 className="text-md mb-4 font-semibold">Sales Performance Trend</h3>
                     <div className="h-96">
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart
-                                data={salesDatas}
-                                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                            >
+                            <AreaChart data={salesDatas} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis dataKey="month" />
                                 <YAxis />
