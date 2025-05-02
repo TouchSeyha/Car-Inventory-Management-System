@@ -26,7 +26,7 @@ export function Pagination({ meta }: PaginationProps) {
         return null;
     }
 
-    const { current_page, last_page, links } = meta;
+    const { current_page, last_page } = meta;
 
     // Get the current URL and search parameters
     const currentUrl = new URL(window.location.href);
@@ -83,49 +83,75 @@ export function Pagination({ meta }: PaginationProps) {
             </div>
             <div className="flex items-center justify-center gap-1">
                 {/* First page button */}
-                <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={current_page <= 1}
-                    as={Link}
-                    href={buildPaginationUrl(1)}
-                    preserveScroll
-                    title="First Page"
-                >
-                    <ChevronsLeft className="h-4 w-4" />
-                    <span className="sr-only">First Page</span>
-                </Button>
+                {current_page <= 1 ? (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        disabled
+                        title="First Page"
+                    >
+                        <ChevronsLeft className="h-4 w-4" />
+                        <span className="sr-only">First Page</span>
+                    </Button>
+                ) : (
+                    <Link href={buildPaginationUrl(1)} preserveScroll>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            title="First Page"
+                        >
+                            <ChevronsLeft className="h-4 w-4" />
+                            <span className="sr-only">First Page</span>
+                        </Button>
+                    </Link>
+                )}
 
                 {/* Previous page button */}
-                <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={current_page <= 1}
-                    as={Link}
-                    href={buildPaginationUrl(current_page > 1 ? current_page - 1 : null)}
-                    preserveScroll
-                    title="Previous Page"
-                >
-                    <ChevronLeft className="h-4 w-4" />
-                    <span className="sr-only">Previous Page</span>
-                </Button>
+                {current_page <= 1 ? (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        disabled
+                        title="Previous Page"
+                    >
+                        <ChevronLeft className="h-4 w-4" />
+                        <span className="sr-only">Previous Page</span>
+                    </Button>
+                ) : (
+                    <Link href={buildPaginationUrl(current_page - 1)} preserveScroll>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            title="Previous Page"
+                        >
+                            <ChevronLeft className="h-4 w-4" />
+                            <span className="sr-only">Previous Page</span>
+                        </Button>
+                    </Link>
+                )}
 
-                {/* Numbered page buttons */}
-                <div className="hidden gap-1 sm:flex">
-                    {pageNumbers.map((page) => (
+                {/* Page numbers */}
+                {pageNumbers.map((page) => (
+                    page === current_page ? (
                         <Button
                             key={page}
-                            variant={page === current_page ? 'default' : 'outline'}
+                            variant="default"
                             size="sm"
-                            as={Link}
-                            href={buildPaginationUrl(page)}
-                            preserveScroll
-                            className={page === current_page ? 'pointer-events-none' : ''}
+                            className="pointer-events-none"
                         >
                             {page}
                         </Button>
-                    ))}
-                </div>
+                    ) : (
+                        <Link key={page} href={buildPaginationUrl(page)} preserveScroll>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                            >
+                                {page}
+                            </Button>
+                        </Link>
+                    )
+                ))}
 
                 {/* Mobile page indicator */}
                 <span className="px-2 text-sm font-medium sm:hidden">
@@ -133,32 +159,52 @@ export function Pagination({ meta }: PaginationProps) {
                 </span>
 
                 {/* Next page button */}
-                <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={current_page >= last_page}
-                    as={Link}
-                    href={buildPaginationUrl(current_page < last_page ? current_page + 1 : null)}
-                    preserveScroll
-                    title="Next Page"
-                >
-                    <ChevronRight className="h-4 w-4" />
-                    <span className="sr-only">Next Page</span>
-                </Button>
+                {current_page >= last_page ? (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        disabled
+                        title="Next Page"
+                    >
+                        <ChevronRight className="h-4 w-4" />
+                        <span className="sr-only">Next Page</span>
+                    </Button>
+                ) : (
+                    <Link href={buildPaginationUrl(current_page + 1)} preserveScroll>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            title="Next Page"
+                        >
+                            <ChevronRight className="h-4 w-4" />
+                            <span className="sr-only">Next Page</span>
+                        </Button>
+                    </Link>
+                )}
 
                 {/* Last page button */}
-                <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={current_page >= last_page}
-                    as={Link}
-                    href={buildPaginationUrl(last_page)}
-                    preserveScroll
-                    title="Last Page"
-                >
-                    <ChevronsRight className="h-4 w-4" />
-                    <span className="sr-only">Last Page</span>
-                </Button>
+                {current_page >= last_page ? (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        disabled
+                        title="Last Page"
+                    >
+                        <ChevronsRight className="h-4 w-4" />
+                        <span className="sr-only">Last Page</span>
+                    </Button>
+                ) : (
+                    <Link href={buildPaginationUrl(last_page)} preserveScroll>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            title="Last Page"
+                        >
+                            <ChevronsRight className="h-4 w-4" />
+                            <span className="sr-only">Last Page</span>
+                        </Button>
+                    </Link>
+                )}
             </div>
         </div>
     );
