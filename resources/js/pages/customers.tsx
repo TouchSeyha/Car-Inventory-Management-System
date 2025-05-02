@@ -24,12 +24,12 @@ interface Customer {
 interface Props {
     customers: {
         data: Customer[];
-        links: any[];
+        links: { url: string | null; label: string; active: boolean }[];
         meta: {
             current_page: number;
             from: number;
             last_page: number;
-            links: any[];
+            links: { url: string | null; label: string; active: boolean }[];
             path: string;
             per_page: number;
             to: number;
@@ -67,13 +67,13 @@ export default function Customers({ customers }: Props) {
         }
     }, [customers]);
 
-    const { data, setData, get, processing } = useForm({
+    const { data, setData, processing } = useForm({
         search: '',
     });
 
     // Improved debounced search function
     const handleSearch = useCallback(
-        (e) => {
+        (e: React.ChangeEvent<HTMLInputElement>) => {
             const value = e.target.value;
             setData('search', value);
 
