@@ -1,211 +1,123 @@
-import { Button } from '@/components/ui/button';
 import { Link } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { useEffect } from 'react';
+import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from 'lucide-react';
+import React from 'react';
 
 interface PaginationProps {
     meta: {
         current_page: number;
+        from: number;
         last_page: number;
         links: Array<{
             url: string | null;
             label: string;
             active: boolean;
         }>;
+        path: string;
+        per_page: number;
+        to: number;
+        total: number;
     };
+    className?: string;
 }
 
-export function Pagination({ meta }: PaginationProps) {
-    // Debugging: log meta data to console
-    useEffect(() => {
-        console.log('Pagination meta data:', meta);
-    }, [meta]);
-
-    // Handle edge cases
-    if (!meta || !meta.links || meta.links.length <= 3) {
+export function Pagination({ meta, className = '' }: PaginationProps) {
+    // Don't render pagination if there's only one page
+    if (meta.last_page <= 1) {
         return null;
     }
 
-    const { current_page, last_page } = meta;
+    // Clean up link labels by removing HTML entities
+    const links = meta.links.map(link => ({
+        ...link,
+        label: link.label.replace(/&laquo;|&raquo;/g, '').trim()
+    }));
 
-    // Get the current URL and search parameters
-    const currentUrl = new URL(window.location.href);
-    const searchParams = Object.fromEntries(currentUrl.searchParams.entries());
-
-    // Function to build pagination URLs that preserve existing query params
-    const buildPaginationUrl = (page: number | null) => {
-        if (!page) return '#';
-
-        // Start with current search params and add/update page parameter
-        const params = { ...searchParams, page: String(page) };
-
-        // Build full URL using current path and search params
-        const url = new URL(currentUrl);
-
-        // Clear existing search params
-        url.search = '';
-
-        // Add all params to the URL
-        Object.entries(params).forEach(([key, value]) => {
-            url.searchParams.append(key, value);
-        });
-
-        return url.toString();
-    };
-
-    // Generate page numbers to display
-    const generatePageNumbers = () => {
-        const pageNumbers = [];
-        const maxPagesShown = 5; // Max number of page links to show
-
-        // Logic to determine which page numbers to show
-        let startPage = Math.max(1, current_page - Math.floor(maxPagesShown / 2));
-        let endPage = startPage + maxPagesShown - 1;
-
-        if (endPage > last_page) {
-            endPage = last_page;
-            startPage = Math.max(1, endPage - maxPagesShown + 1);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            pageNumbers.push(i);
-        }
-
-        return pageNumbers;
-    };
-
-    const pageNumbers = generatePageNumbers();
+    const hasPrevious = meta.current_page > 1;
+    const hasNext = meta.current_page < meta.last_page;
 
     return (
-        <div className="flex items-center justify-between">
-            <div className="text-muted-foreground hidden flex-1 text-sm md:flex">
-                Showing page {current_page} of {last_page}
+        <nav
+            className={`flex items-center justify-between px-4 py-3 sm:px-0 ${className}`}
+            aria-label="Pagination"
+        >
+            <div className="hidden sm:block">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                    Showing <span className="font-medium">{meta.from}</span> to{' '}
+                    <span className="font-medium">{meta.to}</span> of{' '}
+                    <span className="font-medium">{meta.total}</span> results
+                </p>
             </div>
-            <div className="flex items-center justify-center gap-1">
-                {/* First page button */}
-                {current_page <= 1 ? (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        disabled
-                        title="First Page"
-                    >
-                        <ChevronsLeft className="h-4 w-4" />
-                        <span className="sr-only">First Page</span>
-                    </Button>
-                ) : (
-                    <Link href={buildPaginationUrl(1)} preserveScroll>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            title="First Page"
+            <div className="flex flex-1 justify-between sm:justify-end">
+                <div className="flex items-center space-x-1">
+                    {/* Previous button */}
+                    {hasPrevious ? (
+                        <Link
+                            href={links[0].url || '#'}
+                            className="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                         >
-                            <ChevronsLeft className="h-4 w-4" />
-                            <span className="sr-only">First Page</span>
-                        </Button>
-                    </Link>
-                )}
-
-                {/* Previous page button */}
-                {current_page <= 1 ? (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        disabled
-                        title="Previous Page"
-                    >
-                        <ChevronLeft className="h-4 w-4" />
-                        <span className="sr-only">Previous Page</span>
-                    </Button>
-                ) : (
-                    <Link href={buildPaginationUrl(current_page - 1)} preserveScroll>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            title="Previous Page"
-                        >
-                            <ChevronLeft className="h-4 w-4" />
-                            <span className="sr-only">Previous Page</span>
-                        </Button>
-                    </Link>
-                )}
-
-                {/* Page numbers */}
-                {pageNumbers.map((page) => (
-                    page === current_page ? (
-                        <Button
-                            key={page}
-                            variant="default"
-                            size="sm"
-                            className="pointer-events-none"
-                        >
-                            {page}
-                        </Button>
-                    ) : (
-                        <Link key={page} href={buildPaginationUrl(page)} preserveScroll>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                            >
-                                {page}
-                            </Button>
+                            <span className="sr-only">Previous</span>
+                            <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
                         </Link>
-                    )
-                ))}
+                    ) : (
+                        <span className="inline-flex cursor-not-allowed items-center rounded-md border border-gray-300 bg-gray-100 px-2 py-2 text-sm font-medium text-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-500">
+                            <span className="sr-only">Previous</span>
+                            <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                    )}
 
-                {/* Mobile page indicator */}
-                <span className="px-2 text-sm font-medium sm:hidden">
-                    {current_page} / {last_page}
-                </span>
+                    {/* Page numbers */}
+                    {links.slice(1, -1).map((link, index) => {
+                        if (link.label === '...') {
+                            return (
+                                <span
+                                    key={`ellipsis-${index}`}
+                                    className="inline-flex items-center px-1 text-gray-500 dark:text-gray-400"
+                                >
+                                    <MoreHorizontalIcon className="h-5 w-5" />
+                                </span>
+                            );
+                        }
 
-                {/* Next page button */}
-                {current_page >= last_page ? (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        disabled
-                        title="Next Page"
-                    >
-                        <ChevronRight className="h-4 w-4" />
-                        <span className="sr-only">Next Page</span>
-                    </Button>
-                ) : (
-                    <Link href={buildPaginationUrl(current_page + 1)} preserveScroll>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            title="Next Page"
+                        if (link.active) {
+                            return (
+                                <span
+                                    key={`page-${link.label}`}
+                                    aria-current="page"
+                                    className="inline-flex items-center rounded-md border border-primary bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+                                >
+                                    {link.label}
+                                </span>
+                            );
+                        }
+
+                        return (
+                            <Link
+                                key={`page-${link.label}`}
+                                href={link.url || '#'}
+                                className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                            >
+                                {link.label}
+                            </Link>
+                        );
+                    })}
+
+                    {/* Next button */}
+                    {hasNext ? (
+                        <Link
+                            href={links[links.length - 1].url || '#'}
+                            className="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                         >
-                            <ChevronRight className="h-4 w-4" />
-                            <span className="sr-only">Next Page</span>
-                        </Button>
-                    </Link>
-                )}
-
-                {/* Last page button */}
-                {current_page >= last_page ? (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        disabled
-                        title="Last Page"
-                    >
-                        <ChevronsRight className="h-4 w-4" />
-                        <span className="sr-only">Last Page</span>
-                    </Button>
-                ) : (
-                    <Link href={buildPaginationUrl(last_page)} preserveScroll>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            title="Last Page"
-                        >
-                            <ChevronsRight className="h-4 w-4" />
-                            <span className="sr-only">Last Page</span>
-                        </Button>
-                    </Link>
-                )}
+                            <span className="sr-only">Next</span>
+                            <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                        </Link>
+                    ) : (
+                        <span className="inline-flex cursor-not-allowed items-center rounded-md border border-gray-300 bg-gray-100 px-2 py-2 text-sm font-medium text-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-500">
+                            <span className="sr-only">Next</span>
+                            <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                    )}
+                </div>
             </div>
-        </div>
+        </nav>
     );
 }
