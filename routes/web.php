@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\SalesController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -41,15 +42,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('inventory/show', ['inventory' => $inventory]);
     })->name('inventory.show');
 
+    // Sales routes
+    Route::get('/sales', [SalesController::class, 'index'])->name('sales');
+    Route::get('/sales/create', [SalesController::class, 'create'])->name('sales.create');
+    Route::post('/sales', [SalesController::class, 'store'])->name('sales.store');
+    Route::get('/sales/{sale}', [SalesController::class, 'show'])->name('sales.show');
+    Route::get('/sales/{sale}/edit', [SalesController::class, 'edit'])->name('sales.edit');
+    Route::patch('/sales/{sale}', [SalesController::class, 'update'])->name('sales.update');
+    Route::patch('/sales/{sale}/status', [SalesController::class, 'updateStatus'])->name('sales.update-status');
+    Route::delete('/sales/{sale}', [SalesController::class, 'destroy'])->name('sales.destroy');
+
     // Reports routes
     Route::get('/reports', function () {
         return Inertia::render('reports');
     })->name('reports');
-
-    // Sales routes
-    Route::get('/sales', function () {
-        return Inertia::render('sales');
-    })->name('sales');
 });
 
 require __DIR__ . '/settings.php';

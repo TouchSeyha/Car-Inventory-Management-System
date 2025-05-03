@@ -6,9 +6,34 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
-import { useState } from 'react';
-import { salesData } from './data/mockData';
+import { Head, router } from '@inertiajs/react';
+import { useCallback, useState } from 'react';
+import { Loader2, SearchIcon, XIcon } from 'lucide-react';
+import { Sale, SaleStatus } from '@/types/sale';
+import { Pagination } from '@/components/pagination';
+
+interface SalesFilters {
+    search?: string;
+    status?: SaleStatus | 'all';
+}
+
+interface Props {
+    sales: {
+        data: Sale[];
+        links: { url: string | null; label: string; active: boolean }[];
+        meta: {
+            current_page: number;
+            from: number;
+            last_page: number;
+            links: { url: string | null; label: string; active: boolean }[];
+            path: string;
+            per_page: number;
+            to: number;
+            total: number;
+        };
+    };
+    filters: SalesFilters;
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -17,17 +42,72 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Sales() {
-    const [status, setStatus] = useState('all');
-    const [searchTerm, setSearchTerm] = useState('');
+export default function Sales({ sales, filters }: Props) {
+    const [status, setStatus] = useState(filters.status || 'all');
+    const [searchTerm, setSearchTerm] = useState(filters.search || '');
+    const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
+    const [isSearching, setIsSearching] = useState(false);
 
-    const filteredSales = salesData.filter(
-        (sale) =>
-            (status === 'all' || sale.status === status) &&
-            (searchTerm === '' ||
-                sale.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                sale.customer.toLowerCase().includes(searchTerm.toLowerCase())),
+    const handleStatusChange = (value: SaleStatus | 'all') => {
+        setStatus(value);
+        
+        router.visit(route('sales'), {
+            data: { 
+                ...(searchTerm ? { search: searchTerm } : {}),
+                ...(value !== 'all' ? { status: value } : {})
+            },
+            preserveState: true,
+            replace: true,
+        });
+    };
+
+    // Debounced search function
+    const handleSearch = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            const value = e.target.value;
+            setSearchTerm(value);
+
+            // Clear any existing timeout
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+
+            // Set a new timeout to delay the search
+            const timeoutId = setTimeout(() => {
+                performSearch(value);
+            }, 400); // 400ms delay
+
+            setSearchTimeout(timeoutId);
+        },
+        [searchTimeout],
     );
+
+    // Function to perform the search
+    const performSearch = (value: string) => {
+        setIsSearching(true);
+
+        router.visit(route('sales'), {
+            data: { 
+                search: value,
+                ...(status !== 'all' ? { status } : {})
+            },
+            preserveState: true,
+            replace: true,
+            onFinish: () => setIsSearching(false),
+        });
+    };
+
+    // Clear search function
+    const clearSearch = () => {
+        setSearchTerm('');
+
+        router.visit(route('sales'), {
+            data: status !== 'all' ? { status } : {},
+            preserveState: true,
+            replace: true,
+            onFinish: () => setIsSearching(false),
+        });
+    };
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -44,6 +124,29 @@ export default function Sales() {
         }
     };
 
+    // Format date helper function
+    const formatDate = (dateString: string | undefined) => {
+        if (!dateString) return 'N/A';
+        try {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+            });
+        } catch (e) {
+            return (e as Error).message || 'Invalid date';
+        }
+    };
+
+    // Format currency helper function
+    const formatCurrency = (amount: number | string) => {
+        const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        }).format(numericAmount);
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Sales" />
@@ -51,17 +154,35 @@ export default function Sales() {
             <div className="p-4">
                 <div className="mb-6 flex items-center justify-between">
                     <HeadingSmall title="Sales Transactions" description="Manage your orders and sales" />
-                    <Button>Create New Order</Button>
+                    <a href={route('sales.create')}>
+                        <Button>Create New Order</Button>
+                    </a>
                 </div>
 
                 <div className="mb-4 flex flex-wrap gap-3">
-                    <Input
-                        placeholder="Search by order ID or customer..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="max-w-xs"
-                    />
-                    <Select value={status} onValueChange={setStatus}>
+                    <div className="relative max-w-xs flex-1">
+                        <Input
+                            placeholder="Search by order ID or customer..."
+                            value={searchTerm}
+                            onChange={handleSearch}
+                            className="pr-10"
+                        />
+                        {searchTerm && (
+                            <button
+                                onClick={clearSearch}
+                                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                                type="button"
+                                aria-label="Clear search"
+                            >
+                                <XIcon className="h-4 w-4" />
+                            </button>
+                        )}
+                    </div>
+                    <Button onClick={() => performSearch(searchTerm)} type="button">
+                        {isSearching ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <SearchIcon className="mr-2 h-4 w-4" />}
+                        Search
+                    </Button>
+                    <Select value={status} onValueChange={handleStatusChange}>
                         <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="Status" />
                         </SelectTrigger>
@@ -90,35 +211,46 @@ export default function Sales() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {filteredSales.map((sale) => (
-                                <TableRow key={sale.id}>
-                                    <TableCell className="font-medium">{sale.id}</TableCell>
-                                    <TableCell>{sale.customer}</TableCell>
-                                    <TableCell>{sale.date}</TableCell>
-                                    <TableCell>{sale.items}</TableCell>
-                                    <TableCell>${sale.total.toFixed(2)}</TableCell>
-                                    <TableCell>
-                                        <span
-                                            className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${getStatusColor(sale.status)}`}
-                                        >
-                                            {sale.status}
-                                        </span>
-                                    </TableCell>
-                                    <TableCell>{sale.paymentMethod}</TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-2">
-                                            <Button variant="ghost" size="sm">
-                                                View
-                                            </Button>
-                                            <Button variant="ghost" size="sm">
-                                                Manage
-                                            </Button>
-                                        </div>
+                            {sales.data.length > 0 ? (
+                                sales.data.map((sale) => (
+                                    <TableRow key={sale.id}>
+                                        <TableCell className="font-medium">{sale.order_id}</TableCell>
+                                        <TableCell>{sale.customer?.name || 'Unknown'}</TableCell>
+                                        <TableCell>{formatDate(sale.created_at)}</TableCell>
+                                        <TableCell>{sale.item_count}</TableCell>
+                                        <TableCell>{formatCurrency(sale.total_amount)}</TableCell>
+                                        <TableCell>
+                                            <span
+                                                className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${getStatusColor(sale.status)}`}
+                                            >
+                                                {sale.status}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell>{sale.payment_method}</TableCell>
+                                        <TableCell>
+                                                <a href={route('sales.show', sale.id)}>
+                                                    <Button variant="ghost" size="sm">
+                                                        Manage
+                                                    </Button>
+                                                </a>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={8} className="py-8 text-center text-gray-500">
+                                        No sales found. Try a different search or create a new order.
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            )}
                         </TableBody>
                     </Table>
+
+                    {sales.meta && sales.meta.last_page > 1 ? (
+                        <div className="border-t p-4">
+                            <Pagination meta={sales.meta} />
+                        </div>
+                    ) : null}
                 </Card>
             </div>
         </AppLayout>
