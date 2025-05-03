@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\ReportsController;
@@ -15,9 +16,8 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    // Replace the static dashboard route with the controller method
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // Customer routes
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers');
