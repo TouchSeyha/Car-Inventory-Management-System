@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Inventory extends Model
 {
@@ -44,6 +45,14 @@ class Inventory extends Model
         'stock' => 'integer',
         'price' => 'decimal:2',
     ];
+
+    /**
+     * Get the sale items for the inventory item.
+     */
+    public function saleItems(): HasMany
+    {
+        return $this->hasMany(SaleItem::class);
+    }
 
     /**
      * Update the stock level and status automatically
