@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\ReportsController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -53,9 +54,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/sales/{sale}', [SalesController::class, 'destroy'])->name('sales.destroy');
 
     // Reports routes
-    Route::get('/reports', function () {
-        return Inertia::render('reports');
-    })->name('reports');
+    Route::get('/reports', [ReportsController::class, 'index'])->name('reports');
+    Route::post('/reports', [ReportsController::class, 'store'])->name('reports.store');
 });
 
 require __DIR__ . '/settings.php';
