@@ -4,24 +4,8 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { ReportTimeRange } from '@/types/report';
 import { Head, router } from '@inertiajs/react';
-import { useState, useCallback } from 'react';
-import {
-    Area,
-    AreaChart,
-    Bar,
-    BarChart,
-    CartesianGrid,
-    Cell,
-    Legend,
-    Line,
-    LineChart,
-    Pie,
-    PieChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
-} from 'recharts';
+import { useCallback, useState } from 'react';
+import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 interface DashboardProps {
     dashboardData: {
@@ -50,7 +34,7 @@ interface DashboardProps {
             returning: number;
         }>;
         timeRange: ReportTimeRange;
-    }
+    };
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -73,11 +57,11 @@ export default function Dashboard({ dashboardData }: DashboardProps) {
             maximumFractionDigits: 0,
         }).format(amount);
     }, []);
-    
+
     // Handle time range change
     const handleTimeRangeChange = (value: ReportTimeRange) => {
         setTimeRange(value);
-        
+
         router.visit(route('dashboard'), {
             data: { timeRange: value },
             preserveState: true,
@@ -101,7 +85,7 @@ export default function Dashboard({ dashboardData }: DashboardProps) {
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 {/* Time range selection */}
-                <div className="flex justify-end mb-2">
+                <div className="mb-2 flex justify-end">
                     <Select value={timeRange} onValueChange={handleTimeRangeChange}>
                         <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="Time Range" />
@@ -192,15 +176,10 @@ export default function Dashboard({ dashboardData }: DashboardProps) {
                                             fill="#8884d8"
                                             dataKey="value"
                                             nameKey="name"
-                                            label={({ name, percent }) => 
-                                                `${name}: ${(percent * 100).toFixed(0)}%`
-                                            }
+                                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                                         >
                                             {dashboardData.categoryData.map((entry, index) => (
-                                                <Cell 
-                                                    key={`cell-${index}`} 
-                                                    fill={COLORS[index % COLORS.length]} 
-                                                />
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                             ))}
                                         </Pie>
                                         <Tooltip formatter={(value) => [`${value} units`, 'Quantity']} />
@@ -215,25 +194,6 @@ export default function Dashboard({ dashboardData }: DashboardProps) {
                         </div>
                     </Card>
                 </div>
-
-                {/* Area Chart (Full Width) */}
-                <Card className="p-4 shadow-sm">
-                    <h3 className="text-md mb-4 font-semibold">Sales Performance Trend</h3>
-                    <div className="h-96">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={dashboardData.salesData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="month" />
-                                <YAxis />
-                                <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-                                <Legend />
-                                <Area type="monotone" dataKey="sales" stackId="1" stroke="#8884d8" fill="#8884d8" name="Sales" />
-                                <Area type="monotone" dataKey="revenue" stackId="2" stroke="#82ca9d" fill="#82ca9d" name="Revenue" />
-                                <Area type="monotone" dataKey="profit" stackId="3" stroke="#ffc658" fill="#ffc658" name="Profit" />
-                            </AreaChart>
-                        </ResponsiveContainer>
-                    </div>
-                </Card>
             </div>
         </AppLayout>
     );
